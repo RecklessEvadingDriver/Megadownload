@@ -34,8 +34,15 @@ ENV/
 
 # Downloads folder
 downloads/
+web_downloads/
 *.tmp
+*.zip
 
 # Mega cache
 .megacache/
 .mega/
+
+# Flask
+instance/
+.webassets-cache
+

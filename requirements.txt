@@ -1,4 +1,10 @@
 # No Python dependencies required for basic functionality
 # megatools must be installed as a system package
 
+# Web interface dependencies
+Flask>=3.0.0
+gunicorn>=21.2.0
+
+
+
 

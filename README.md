@@ -1,9 +1,11 @@
 # Mega Downloader
 
-A Python-based downloader for Mega.nz links that supports downloading single files, videos, and entire folders.
+A Python-based downloader for Mega.nz links that supports downloading single files, videos, and entire folders. Available as both a **command-line tool** and a **web interface**.
 
 ## Features
 
+- 🌐 **Web Interface** - Beautiful, user-friendly web UI (NEW!)
+- 💻 **Command Line** - Powerful CLI for advanced users
 - Download single files from Mega links
 - Download entire folders recursively
 - Progress tracking with real-time updates
@@ -34,21 +36,31 @@ brew install megatools
 **Other platforms:**
 Visit [https://megatools.megous.com/](https://megatools.megous.com/) for installation instructions.
 
-3. Install Python dependencies (optional, minimal):
+3. Install Python dependencies:
 ```bash
 pip install -r requirements.txt
 ```
 
 ## Usage
 
-### Basic Usage
+### 🌐 Web Interface (Recommended for Beginners)
+
+Start the web server:
+```bash
+python3 web_app.py
+```
+
+Then open your browser and go to `http://localhost:5000`
+
+**See [WEB_INTERFACE.md](WEB_INTERFACE.md) for detailed web interface documentation.**
+
+### 💻 Command Line Interface
 
 Download a single file or folder:
 ```bash
 python megadownload.py <mega_link>
 ```
-
-### Advanced Usage
+#### Basic Usage
 
 Specify output directory:
 ```bash
@@ -59,8 +71,7 @@ Download to current directory:
 ```bash
 python megadownload.py <mega_link> -o .
 ```
-
-### Examples
+#### Advanced Usage
 
 Download a single file:
 ```bash
@@ -71,13 +82,11 @@ Download an entire folder:
 ```bash
 python megadownload.py "https://mega.nz/folder/XXXXXXXX#YYYYYYYY"
 ```
-
-## Link Formats Supported
+#### Examples
 
 - File links: `https://mega.nz/file/...` or `https://mega.nz/#!...`
 - Folder links: `https://mega.nz/folder/...` or `https://mega.nz/#F!...`
-
-## Requirements
+## Link Formats Supported
 
 - Python 3.6 or higher
 - megatools (command-line tools for Mega.nz)
