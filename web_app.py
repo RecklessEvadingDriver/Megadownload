@@ -21,7 +21,10 @@ from megadownload import MegaDownloader
 app = Flask(__name__)
 
 # Configuration - use environment variables for production
-app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'mega-downloader-secret-key-change-in-production')
+# Generate a random secret key if not provided
+import secrets
+default_secret = secrets.token_hex(32)
+app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', default_secret)
 app.config['DOWNLOAD_FOLDER'] = Path(os.environ.get('DOWNLOAD_FOLDER', 'web_downloads'))
 app.config['DOWNLOAD_FOLDER'].mkdir(exist_ok=True)
 app.config['MAX_CONTENT_LENGTH'] = 500 * 1024 * 1024  # 500MB max request size
@@ -157,9 +160,9 @@ def download():
     if not url:
         return jsonify({'error': 'URL is required'}), 400
     
-    # Validate URL
-    if 'mega.nz' not in url and 'mega.co.nz' not in url:
-        return jsonify({'error': 'Invalid Mega link. URL must contain mega.nz or mega.co.nz'}), 400
+    # Validate URL - must start with mega.nz domain
+    if not (url.startswith('https://mega.nz/') or url.startswith('https://mega.co.nz/')):
+        return jsonify({'error': 'Invalid Mega link. URL must be from mega.nz or mega.co.nz domain'}), 400
     
     # Generate unique download ID
     download_id = str(uuid.uuid4())
@@ -185,7 +188,25 @@ def status(download_id):
 @app.route('/download_file/<download_id>/<path:filename>')
 def download_file(download_id, filename):
     """Download a specific file and cleanup after"""
+    # Validate download_id is a valid UUID to prevent path traversal
+    try:
+        uuid.UUID(download_id)
+    except ValueError:
+        return jsonify({'error': 'Invalid download ID'}), 400
+    
+    # Secure the filename to prevent path traversal
+    filename = secure_filename(filename)
+    
     file_path = app.config['DOWNLOAD_FOLDER'] / download_id / filename
+    
+    # Ensure the file path is within the download folder
+    try:
+        file_path = file_path.resolve()
+        download_folder = app.config['DOWNLOAD_FOLDER'].resolve()
+        if not str(file_path).startswith(str(download_folder)):
+            return jsonify({'error': 'Access denied'}), 403
+    except Exception:
+        return jsonify({'error': 'Invalid file path'}), 400
     
     if not file_path.exists():
         return jsonify({'error': 'File not found'}), 404
@@ -201,6 +222,12 @@ def download_file(download_id, filename):
 @app.route('/download_all/<download_id>')
 def download_all(download_id):
     """Download all files as a zip and cleanup after"""
+    # Validate download_id is a valid UUID
+    try:
+        uuid.UUID(download_id)
+    except ValueError:
+        return jsonify({'error': 'Invalid download ID'}), 400
+    
     download_dir = app.config['DOWNLOAD_FOLDER'] / download_id
     
     if not download_dir.exists():
@@ -213,9 +240,9 @@ def download_all(download_id):
     # Send file
     response = send_file(zip_path, as_attachment=True, download_name='mega_download.zip')
     
-    # Schedule cleanup after sending
+    # Schedule cleanup after sending (non-blocking)
     def cleanup_after_download():
-        time.sleep(2)  # Wait for download to complete
+        time.sleep(5)  # Wait for download to start
         try:
             # Remove download directory
             if download_dir.exists():
@@ -226,8 +253,9 @@ def download_all(download_id):
             # Remove from status
             if download_id in download_status:
                 del download_status[download_id]
+            print(f"[Cleanup] Cleaned up download: {download_id}")
         except Exception as e:
-            print(f"Cleanup error: {e}")
+            print(f"[Cleanup] Error during post-download cleanup: {e}")
     
     # Start cleanup in background
     cleanup_thread = threading.Thread(target=cleanup_after_download, daemon=True)

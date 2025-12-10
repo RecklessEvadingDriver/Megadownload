@@ -1,5 +1,9 @@
 // Mega Downloader Web App JavaScript
 
+// Configuration constants
+const STATUS_CHECK_INTERVAL = 2000; // 2 seconds
+const AUTO_RESET_DELAY = 3000; // 3 seconds
+
 let currentDownloadId = null;
 let statusCheckInterval = null;
 
@@ -97,8 +101,8 @@ async function checkStatus() {
             clearInterval(statusCheckInterval);
             showError(data.message);
         } else {
-            // Still downloading, check again in 2 seconds
-            statusCheckInterval = setTimeout(checkStatus, 2000);
+            // Still downloading, check again after configured interval
+            statusCheckInterval = setTimeout(checkStatus, STATUS_CHECK_INTERVAL);
         }
         
     } catch (error) {
@@ -176,7 +180,7 @@ function downloadAll() {
     // Automatically start a new download session after a brief delay
     setTimeout(() => {
         resetForm();
-    }, 3000);
+    }, AUTO_RESET_DELAY);
 }
 
 // Show error
