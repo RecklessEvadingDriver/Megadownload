@@ -46,10 +46,19 @@ class MegaDownloader:
         """
         url = url.strip()
         
-        # Detect link type
-        if '/folder/' in url or '/#F!' in url or '#F!' in url:
+        # Detect link type - check folder patterns first (more specific)
+        if '/folder/' in url:
             return ('folder', url)
-        elif '/file/' in url or '/#!' in url or '#!' in url:
+        elif '/#F!' in url:
+            return ('folder', url)
+        elif url.startswith('https://mega.nz/') and '#F!' in url and url.index('#F!') > url.index('mega.nz/'):
+            return ('folder', url)
+        # Check file patterns
+        elif '/file/' in url:
+            return ('file', url)
+        elif '/#!' in url:
+            return ('file', url)
+        elif url.startswith('https://mega.nz/') and '#!' in url and url.index('#!') > url.index('mega.nz/'):
             return ('file', url)
         else:
             raise ValueError("Invalid Mega link format. Link must be a file or folder link.")

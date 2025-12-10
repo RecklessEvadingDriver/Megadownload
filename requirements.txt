@@ -1,2 +1,4 @@
-requests>=2.31.0
+# No Python dependencies required for basic functionality
+# megatools must be installed as a system package
+
 
