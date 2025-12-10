@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mega Downloader - Download Files & Folders from Mega.nz</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🚀 Mega Downloader</h1>
+            <p class="subtitle">Download files and folders from Mega.nz links</p>
+        </header>
+
+        <div class="main-content">
+            <div class="download-section">
+                <div class="input-group">
+                    <input 
+                        type="text" 
+                        id="mega-url" 
+                        placeholder="Paste your Mega.nz link here (file or folder)" 
+                        class="url-input"
+                    >
+                    <button id="download-btn" class="btn btn-primary">Download</button>
+                </div>
+
+                <div class="info-box">
+                    <h3>📌 Supported Link Formats:</h3>
+                    <ul>
+                        <li><strong>Files:</strong> https://mega.nz/file/XXXXX#YYYYY or https://mega.nz/#!XXXXX</li>
+                        <li><strong>Folders:</strong> https://mega.nz/folder/XXXXX#YYYYY or https://mega.nz/#F!XXXXX</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div id="status-section" class="status-section" style="display: none;">
+                <div class="status-card">
+                    <h3>Download Status</h3>
+                    <div id="status-content">
+                        <div class="loader"></div>
+                        <p id="status-message">Initializing download...</p>
+                    </div>
+                </div>
+            </div>
+
+            <div id="results-section" class="results-section" style="display: none;">
+                <div class="results-card">
+                    <h3>✅ Download Complete!</h3>
+                    <div id="files-list"></div>
+                    <div class="action-buttons">
+                        <button id="download-all-btn" class="btn btn-success">Download All as ZIP</button>
+                        <button id="new-download-btn" class="btn btn-secondary">New Download</button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="error-section" class="error-section" style="display: none;">
+                <div class="error-card">
+                    <h3>❌ Error</h3>
+                    <p id="error-message"></p>
+                    <button id="retry-btn" class="btn btn-secondary">Try Again</button>
+                </div>
+            </div>
+        </div>
+
+        <footer>
+            <div class="features">
+                <div class="feature">
+                    <span class="icon">📁</span>
+                    <p>Folder Support</p>
+                </div>
+                <div class="feature">
+                    <span class="icon">🎥</span>
+                    <p>Video & Files</p>
+                </div>
+                <div class="feature">
+                    <span class="icon">⚡</span>
+                    <p>Fast Downloads</p>
+                </div>
+                <div class="feature">
+                    <span class="icon">🔒</span>
+                    <p>Secure</p>
+                </div>
+            </div>
+            <p class="copyright">Mega Downloader &copy; 2024 | Made with ❤️</p>
+        </footer>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+</body>
+</html>
